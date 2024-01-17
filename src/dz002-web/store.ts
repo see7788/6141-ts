@@ -57,14 +57,18 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                 // } else
                 let [api, db] = data
                 if (api.indexOf("set") === -1) {
-                    api += ".indexOf('set') === -1////" + new Date()
+                    console.log({
+                        api,
+                        db,
+                        error:".indexOf('set') === -1////" + new Date()
+                    });
                 } else {
                     s.state = { ...s.state, ...db }
+                    console.log({
+                        api,
+                        db,
+                    });
                 }
-                console.log({
-                    api,
-                    db,
-                });
             } catch (e) {
                 console.error({ jsonstr, e })
             }

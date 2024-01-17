@@ -1,14 +1,26 @@
 import { FC } from 'react'
-import { Descriptions, InputNumber } from "antd"
+import _ from "lodash"
+import {
+    Descriptions,
+    InputNumber,
+    Space,
+    Popover,
+    Avatar,
+    Badge,
+} from "antd"
 import Hover from "@public/HoverEdit"
 import OnSendTo from "../onSendTo"
-import { mcu_ybl_t,mcu_yblI18n_t} from "./.t"
+import { DeleteOutlined } from '@ant-design/icons';
+import { mcu_ybl_t, mcu_yblI18n_t, mcu_ybl_idInfo_t } from "./.t"
 const App: FC<{
     config: mcu_ybl_t;
     sendTos: Array<string>,
     i18n: mcu_yblI18n_t;
     set: (...op: mcu_ybl_t) => void;
 }> = ({ i18n, config, set, sendTos }) => {
+    const getState = (c: mcu_ybl_idInfo_t) => {
+        return c.state === 8 ? true : false
+    }
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>
@@ -19,7 +31,18 @@ const App: FC<{
                 />
             </Descriptions.Item>
             <Descriptions.Item label={i18n[1]}>
-                {JSON.stringify(config[1])}
+                <Space >
+                    {Object.entries(config[1]).map(([id, info], i) => {
+                        const style = { backgroundColor: getState(info) ? '#FF3366' : "#33CC33" }
+                        return (
+                            <Badge key={i} style={style} count={i + 1} >
+                                <Popover content={<><DeleteOutlined />{info.type}</>} >
+                                    <Avatar shape="square" style={style} size={64}>{id}</Avatar >
+                                </Popover>
+                            </Badge>
+                        )
+                    })}
+                </Space>
             </Descriptions.Item>
             <Descriptions.Item label={i18n[2]}>
                 <Hover value={config[2]} jsx={
