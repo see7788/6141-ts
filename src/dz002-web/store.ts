@@ -22,7 +22,7 @@ interface store_t {
 // }
 //window.req=()=>console.log("stroe def")
 const useStore = create<store_t>()(immer<store_t>((seter, self) => {
-    const defReq: req_t = async (...str: any[]) => console.log("defReq")
+    const defReq: req_t = async (...str: any[]) => console.log("defReq", ...str)
     return {
         state: {
             ...configBase, i18n
@@ -31,18 +31,20 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
             if (req2) {
                 seter(s => {
                     s.req = async (...op) => {
-                        if (op[0] === "config_set") {
-                            seter(s => {
-                                s.state = { ...s.state, ...op[1] }
-                            })
-                        }
-                        req2(JSON.stringify(op))
+                        // if (op[0] === "config_set") {
+                        //     seter(s => {
+                        //         s.state = { ...s.state, ...op[1] }
+                        //     })
+                        // }
+                        const c=JSON.stringify(op)
+                        req2(c)
                     }
                 })
-                self().req("i18n_get")
-                setTimeout(() => {
-                    self().req("mcu_state_get")
-                }, 300);
+                // self().req("i18n_get")
+                // self().req("mcu_state_get")
+                // setTimeout(() => {
+                //     self().req("mcu_state_get")
+                // }, 300);
             } else {
                 seter(s => {
                     s.req = defReq
@@ -52,25 +54,14 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
         res: jsonstr => seter(s => {
             try {
                 const data = JSON.parse(jsonstr) as Awaited<ReturnType<api_t>>//{ api: string, db: Partial<state_t>, token: string };
-                // if (data.token !== defapptoken) {
-                //     data.token += ' apptoken error'
-                // } else
-                let [api, db] = data
-                if (api.indexOf("set") === -1) {
-                    console.log({
-                        api,
-                        db,
-                        error:".indexOf('set') === -1////" + new Date()
-                    });
-                } else {
-                    s.state = { ...s.state, ...db }
-                    console.log({
-                        api,
-                        db,
-                    });
+                if (typeof (data) === "object" && Array.isArray(data) && data[0]&&typeof data[0]==="string" && data[0].endsWith("set")) {
+                    s.state = { ...s.state, ...data[1] }
+                    console.log("use",data);
+                }else{
+                    console.log("pass",data);
                 }
             } catch (e) {
-                console.error({ jsonstr, e })
+                console.error(jsonstr)
             }
         }),
         req: defReq,
