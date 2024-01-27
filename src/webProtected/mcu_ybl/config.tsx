@@ -21,22 +21,27 @@ const App: FC<{
     const getState = (c: mcu_ybl_idInfo_t) => {
         return c.state === 8 ? true : false
     }
+    const c = config && config[1] ? Object.entries(config[1]) : [];
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>
-                <OnSendTo
+                {/* <OnSendTo
                     sendTos={sendTos}
                     vdef={config[0]}
                     vset={v => set(v as any, config[1], config[2], config[3])}
-                />
+                /> */}
+                <></>
             </Descriptions.Item>
             <Descriptions.Item label={i18n[1]}>
                 <Space >
-                    {Object.entries(config[1]).map(([id, info], i) => {
+                    {c.map(([id, info], i) => {
                         const style = { backgroundColor: getState(info) ? '#FF3366' : "#33CC33" }
                         return (
                             <Badge key={i} style={style} count={i + 1} >
-                                <Popover content={<><DeleteOutlined />{info.type}</>} >
+                                <Popover content={<DeleteOutlined onClick={() => {
+                                    const c = Object.fromEntries(Object.entries(config[1]).filter(kv => kv[0] != id))
+                                    set(config[0], c, config[2], config[3])
+                                }} />} >
                                     <Avatar shape="square" style={style} size={64}>{id}</Avatar >
                                 </Popover>
                             </Badge>
@@ -51,7 +56,7 @@ const App: FC<{
                         value={config[2]}
                         bordered={false}
                         status="error"
-                        onChange={v => set(config[0], config[1], v || 0, config[3])}
+                        onChange={v => set(config[0], config[1], v || 300, config[3])}
                         step={300}
                         min={300}
                     />

@@ -17,13 +17,9 @@ const App: FC<{
                     <Input
                         value={config[0]}
                         bordered={false}
-                        onChange={v => set(v.currentTarget.value, config[1])}
+                        onChange={v => set(v.currentTarget.value)}
                     />
                 } />
-            </Descriptions.Item>
-            <Descriptions.Item label={i18n[1]}>
-                <OnSendTo sendTos={sendTos}
-                    vdef={config[1]} vset={v => set(config[0], v)} />
             </Descriptions.Item>
         </Descriptions>
     )

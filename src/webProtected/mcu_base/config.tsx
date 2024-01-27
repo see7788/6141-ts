@@ -2,7 +2,7 @@
 import { FC } from 'react'
 import { Input, Descriptions } from "antd"
 import OnSendTo from "../onSendTo"
-import {mcu_baseI18n_t, mcu_base_t } from "./.t"
+import { mcu_baseI18n_t, mcu_base_t } from "./.t"
 const App: FC<{
     config: mcu_base_t;
     i18n: mcu_baseI18n_t;
@@ -12,16 +12,13 @@ const App: FC<{
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>
-                {config[0]}
+                <OnSendTo sendTos={sendTos} vdef={config[0]} vset={v => set(v, config[1], config[2])} />
             </Descriptions.Item>
             <Descriptions.Item label={i18n[1]}>
-                {config[1]}
+                <OnSendTo sendTos={sendTos} vdef={config[0]} vset={v => set(config[0], v, config[2])} />
             </Descriptions.Item>
             <Descriptions.Item label={i18n[2]} >
                 {config[2]}
-            </Descriptions.Item>
-            <Descriptions.Item label={i18n[3]}>
-                <OnSendTo sendTos={sendTos} vdef={config[3]} vset={v => set(config[0], config[1], config[2], v as any, config[4])} />
             </Descriptions.Item>
         </Descriptions>
     )

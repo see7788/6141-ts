@@ -31,20 +31,17 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
             if (req2) {
                 seter(s => {
                     s.req = async (...op) => {
-                        // if (op[0] === "config_set") {
-                        //     seter(s => {
-                        //         s.state = { ...s.state, ...op[1] }
-                        //     })
-                        // }
-                        const c=JSON.stringify(op)
+                        if (op[0] === "config_set") {
+                            seter(s => {
+                                s.state = { ...s.state, ...op[1] }
+                            })
+                        }
+                        const c = JSON.stringify(op)
+                        console.log(c);
                         req2(c)
                     }
+                    s.req("mcu_state_get")
                 })
-                // self().req("i18n_get")
-                // self().req("mcu_state_get")
-                // setTimeout(() => {
-                //     self().req("mcu_state_get")
-                // }, 300);
             } else {
                 seter(s => {
                     s.req = defReq
@@ -54,11 +51,11 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
         res: jsonstr => seter(s => {
             try {
                 const data = JSON.parse(jsonstr) as Awaited<ReturnType<api_t>>//{ api: string, db: Partial<state_t>, token: string };
-                if (typeof (data) === "object" && Array.isArray(data) && data[0]&&typeof data[0]==="string" && data[0].endsWith("set")) {
+                if (typeof (data) === "object" && Array.isArray(data) && data[0] && typeof data[0] === "string" && data[0].endsWith("set")) {
                     s.state = { ...s.state, ...data[1] }
-                    console.log("use",data);
-                }else{
-                    console.log("pass",data);
+                    console.log("use", data);
+                } else {
+                    console.log("pass", data);
                 }
             } catch (e) {
                 console.error(jsonstr)
