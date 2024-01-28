@@ -21,20 +21,18 @@ const App: FC<{
     const getState = (c: mcu_ybl_idInfo_t) => {
         return c.state === 8 ? true : false
     }
-    const c = config && config[1] ? Object.entries(config[1]) : [];
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>
-                {/* <OnSendTo
-                    sendTos={sendTos}
+                <OnSendTo
+                    sendTos={sendTos.length?sendTos:[]}
                     vdef={config[0]}
                     vset={v => set(v as any, config[1], config[2], config[3])}
-                /> */}
-                <></>
+                />
             </Descriptions.Item>
             <Descriptions.Item label={i18n[1]}>
                 <Space >
-                    {c.map(([id, info], i) => {
+                    {Object.entries(config[1]).map(([id, info], i) => {
                         const style = { backgroundColor: getState(info) ? '#FF3366' : "#33CC33" }
                         return (
                             <Badge key={i} style={style} count={i + 1} >

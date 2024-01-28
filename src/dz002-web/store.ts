@@ -51,9 +51,9 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
         res: jsonstr => seter(s => {
             try {
                 const data = JSON.parse(jsonstr) as Awaited<ReturnType<api_t>>//{ api: string, db: Partial<state_t>, token: string };
-                if (typeof (data) === "object" && Array.isArray(data) && data[0] && typeof data[0] === "string" && data[0].endsWith("set")) {
+                if (Array.isArray(data) && data[0] && typeof data[0] === "string" && data[0].endsWith("set")) {
                     s.state = { ...s.state, ...data[1] }
-                    console.log("use", data);
+                    console.log({data,state:s.state});
                 } else {
                     console.log("pass", data);
                 }

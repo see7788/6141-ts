@@ -10,9 +10,7 @@ export type api_t =
     // ((...op: ["config_set", Partial<config_t>]) => Promise<["config_set", config_t]>) |
     ((...op: ["config_toFileRestart", Partial<config_t>]) => Promise<["config_set", config_t]>) |
     ((...op: ["config_fromFileRestart"]) => Promise<["config_set", config_t]>) |
-    ((...op: dz003StateReqParam) => Promise<["mcu_dz003State_set", Pick<state_t, "mcu_dz003State">]>) |
     ((...op: ["i18n_Subscriber"]) => Promise<["set", Pick<state_t, "i18n">]>) |
-    ((...op: ["mcu_dz003State_Subscriber"]) => Promise<["mcu_dz003State_set", Pick<state_t, "mcu_dz003State">]>) |
     ((...op: ["mcu_state_Subscriber"]) => Promise<["set",Pick<state_t, "mcu_state">]>);
 // export type reqParam_t =
 //     ["i18n_get"] |
