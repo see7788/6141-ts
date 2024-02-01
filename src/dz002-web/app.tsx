@@ -22,7 +22,7 @@ const App: FC = () => {
     const { Panel } = Collapse;
     const { token } = theme.useToken();
     const Login: FC = () => <LoadingOutlined style={{ fontSize: '50px' }} spin />
-    const sendTos =[]as Array<any>// (Object.keys(state).filter(v => v.endsWith("18n") == false).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
+    const sendTos = [] as Array<any>// (Object.keys(state).filter(v => v.endsWith("18n") == false).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
     const uis = [
         ["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />],
         state?.mcu_base && ["mcu_base",
@@ -46,7 +46,6 @@ const App: FC = () => {
         state?.mcu_ybl && [
             "mcu_ybl",
             <McuYbl
-                sendTos={sendTos}
                 config={state.mcu_ybl}
                 i18n={state.i18n.mcu_ybl}
                 set={(...op) => req("config_set", { mcu_ybl: op })}

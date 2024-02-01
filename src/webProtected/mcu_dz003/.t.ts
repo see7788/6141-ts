@@ -50,7 +50,4 @@ export const mcu_dz003StateI18n: mcu_dz003StateI18n_t = {
         read: ["boolean", "boolean"]
     },
 }
-export type dz003StateReqParam = ["mcu_dz003State.fa.set", boolean] |
-["mcu_dz003State.frequency.set", boolean] |
-["mcu_dz003State.laba.set", boolean] |
-["mcu_dz003State.deng.set", boolean]
+export type qa_t = (...op: [`mcu_dz003State.${"fa" | "frequency" | "laba" | "deng"}.set`, boolean]) => ["set", { "mcu_dz003State": mcu_dz003_t }]

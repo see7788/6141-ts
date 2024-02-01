@@ -2,15 +2,14 @@ import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
 import { reqIpcInit_t } from "@ui/type"
 import type { } from 'zustand/middleware'//调试作用
-import { state_t, configBase, i18n } from "./config"
-import { api_t } from "./storeApi"
-type req_t = (...op: Parameters<api_t>) => Promise<void>
-// type ExpandRecursively<T> = T extends object
+import { config, config_t, i18n, i18n_t, state_t,qa_t } from "../dz002-cpp/t"
+type req_t = (...op: Parameters<qa_t>) => Promise<void>
+// type ExpandRecursively<T> = T extends shuobject
 //   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
 //   : T;
-// type demo=ExpandRecursively<api_t>
+// type demo=ExpandRecursively<qa_t>
 interface store_t {
-    state: state_t;
+    state: Partial<Omit<state_t, "i18n">> & Pick<state_t, "i18n">;
     res: (jsonstr: string) => void;
     reqInit: reqIpcInit_t,
     req: req_t;
@@ -25,7 +24,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
     const defReq: req_t = async (...str: any[]) => console.log("defReq", ...str)
     return {
         state: {
-            ...configBase, i18n
+            ...config, i18n
         },
         reqInit: req2 => {
             if (req2) {
@@ -50,10 +49,10 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
         },
         res: jsonstr => seter(s => {
             try {
-                const data = JSON.parse(jsonstr) as Awaited<ReturnType<api_t>>//{ api: string, db: Partial<state_t>, token: string };
+                const data = JSON.parse(jsonstr) as Awaited<ReturnType<qa_t>>//{ api: string, db: Partial<state_t>, token: string };
                 if (Array.isArray(data) && data[0] && typeof data[0] === "string" && data[0].endsWith("set")) {
                     s.state = { ...s.state, ...data[1] }
-                    console.log({data,state:s.state});
+                    console.log({ data, state: s.state });
                 } else {
                     console.log("pass", data);
                 }
