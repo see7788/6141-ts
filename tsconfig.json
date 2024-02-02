@@ -9,8 +9,8 @@
       "ESNext"
     ],
     "paths": {
-      "@public/*": ["./src/public/*"],
-      "@ui/*": ["./src/webProtected/*"],
+      "@uipublic/*": ["./src/dz002-cppWeb/public/*"],
+      "@ui/*": ["./src/dz002-cppWeb/protected/*"],
     },
     "allowJs": false,
     "skipLibCheck": true,

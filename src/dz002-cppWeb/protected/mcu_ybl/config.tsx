@@ -8,7 +8,7 @@ import {
     Avatar,
     Badge,
 } from "antd"
-import Hover from "@public/HoverEdit"
+import Hover from "@uipublic/HoverEdit"
 import { DeleteOutlined } from '@ant-design/icons';
 import { mcu_ybl_t, mcu_yblI18n_t, mcu_ybl_idInfo_t } from "./.t"
 const App: FC<{

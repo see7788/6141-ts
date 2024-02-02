@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { InputNumber, Descriptions } from 'antd';
-import HoverEdit from "@public/HoverEdit"
+import HoverEdit from "@uipublic/HoverEdit"
 import OnSendTo from "../onSendTo"
 import { mcu_dz003_t,mcu_dz003I18n_t } from "./.t"
 const App: FC<{

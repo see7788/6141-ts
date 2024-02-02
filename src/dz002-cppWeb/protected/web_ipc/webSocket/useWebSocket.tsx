@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { reqIpcInit_t, res_t } from "@ui/type"
-import { tokenIp } from "@public/toolFun"
+import { tokenIp } from "@uipublic/toolFun"
 let obj: WebSocket;
 function readyState(): Promise<void> {
     return new Promise((ok) => {

@@ -71,7 +71,7 @@ function parseArgs() {
     return result;
 }
 const { mode, outDir } = parseArgs()
-console.log({ mode, outDir})
+console.log({ mode, outDir })
 const webconfig: UserConfigFn = ({ command, mode }) => {
     const tsxName = "app.tsx"
     const cwdPath = normalizePath(process.cwd())
@@ -123,8 +123,8 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
         ],
         resolve: {
             alias: {
-                '@public': resolve(__dirname, './src/public/'),
-                '@ui': resolve(__dirname, './src/webProtected/'),
+                '@public': resolve(__dirname, './src/dz002-cppWeb/public/'),
+                '@ui': resolve(__dirname, './src/dz002-cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
             }
         },
         ssr: {},
