@@ -1,8 +1,8 @@
 
 import aedes from "aedes"
 import { createServer as aedesfactory } from "aedes-server-factory"
-type aedesCreateParam_t = { wsPort?: number, tcpPort?: number }
-export default class {
+import { aedesCreateParam_t } from "./t"
+class Base {
     protected obj
     constructor({ wsPort, tcpPort }: aedesCreateParam_t) {
         const c = this.obj = new aedes();
@@ -10,6 +10,20 @@ export default class {
         //连接
         c.on('client', function (client) {
             console.log('server.mqtt.client:', client.id, c.connectedClients);
+            client.publish({
+                cmd: 'publish',
+                qos: 0,
+                dup: false,
+                retain: false,
+                topic: 'my/topic',
+                payload: Buffer.from('Hello, client!')
+            }, (err) => {
+                if (err) {
+                    console.error('Error publishing message:', err);
+                } else {
+                    console.log('Message published successfully');
+                }
+            });
         });
         //连接拦截
         c.authenticate = function (client, username, password, callback) {

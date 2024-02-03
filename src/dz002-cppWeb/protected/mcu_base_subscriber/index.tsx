@@ -19,9 +19,6 @@ const App: FC<{
             <Descriptions.Item label={i18n[3]}>
                 {config[3]}
             </Descriptions.Item>
-            <Descriptions.Item label={i18n[4]}>
-                {config[4]}
-            </Descriptions.Item>
         </Descriptions>
     )
 }

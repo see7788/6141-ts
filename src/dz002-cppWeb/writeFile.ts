@@ -1,6 +1,6 @@
 //path.dirname(fileURLToPath(import.meta.url)
 
-import { config, i18n } from "./t"
+import { config, i18n } from "../dz002-cpp/t"
 import path from "node:path"
 import fs from "node:fs"
 const { outDir } = Object.fromEntries(process.argv.slice(2).map(v => v.replace("--", "")).map(v => v.split("="))) as { outDir: string };

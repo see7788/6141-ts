@@ -123,7 +123,7 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
         ],
         resolve: {
             alias: {
-                '@public': resolve(__dirname, './src/dz002-cppWeb/public/'),
+                '@uipublic': resolve(__dirname, './src/dz002-cppWeb/public/'),
                 '@ui': resolve(__dirname, './src/dz002-cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
             }
         },

@@ -1,18 +1,18 @@
 import { lazy, FC, Suspense, Fragment, useState, memo } from 'react'
 import { LoadingOutlined } from "@ant-design/icons"
-import { Collapse, theme,FloatButton} from "antd"
-import createRoot from "@ui/createApp"
+import { Collapse, theme, FloatButton } from "antd"
+import createRoot from "./protected/createApp"
 import useStore from "./store"
-const WebIpc = lazy(() => import("@ui/web_ipc"))
-const JsonEdit = lazy(() => import("@ui/jsonEdit"))
-const McuState = lazy(() => import("@ui/mcu_state"))
-const McuBase = lazy(() => import("@ui/mcu_base/config"))
-const McuNet = lazy(() => import("@ui/mcu_net/config"))
-const McuSerial = lazy(() => import("@ui/mcu_ipcSerial/config"))
-const McuYbl = lazy(() => import("@ui/mcu_ybl/config"))
-const McuWsServer = lazy(() => import("@ui/mcu_ipcServer/mcu_wsServer"))
-const McuEsServer = lazy(() => import("@ui/mcu_ipcServer/mcu_esServer"))
-const McuWebPageServer = lazy(() => import("@ui/mcu_ipcServer/mcu_webPageServer"))
+const WebIpc = lazy(() => import("./protected/web_ipc"))
+const JsonEdit = lazy(() => import("./protected/jsonEdit"))
+const McuState = lazy(() => import("./protected/mcu_base_subscriber"))
+const McuBase = lazy(() => import("./protected/mcu_base/config"))
+const McuNet = lazy(() => import("./protected/mcu_net/config"))
+const McuSerial = lazy(() => import("./protected/mcu_ipcSerial/config"))
+const McuYbl = lazy(() => import("./protected/mcu_ybl/config"))
+const McuWsServer = lazy(() => import("./protected/mcu_ipcServer/mcu_wsServer"))
+const McuEsServer = lazy(() => import("./protected/mcu_ipcServer/mcu_esServer"))
+const McuWebPageServer = lazy(() => import("./protected/mcu_ipcServer/mcu_webPageServer"))
 
 const App: FC = () => {
     const req = useStore(s => s.req)
@@ -28,7 +28,7 @@ const App: FC = () => {
         state?.mcu_base && ["mcu_base",
             <Fragment>
                 <McuBase sendTos={sendTos} config={state.mcu_base} i18n={state.i18n.mcu_base} set={(...op) => req("config_set", { mcu_base: op })} />
-                {state?.mcu_state && <McuState config={state.mcu_state} i18n={state.i18n.mcu_state} />}
+                {state?.mcu_base_subscriber && <McuState config={state.mcu_base_subscriber} i18n={state.i18n.mcu_state} />}
             </Fragment>
         ],
         ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("i18n_set", i18n)} />],
@@ -75,7 +75,7 @@ const App: FC = () => {
                     shape="square"
                     style={{ right: 70 }}
                     onClick={() => {
-                        const { mcu_state, ...config } = state
+                        const { mcu_base_subscriber, ...config } = state
                         req("config_toFileRestart", config);
                     }}
                 />

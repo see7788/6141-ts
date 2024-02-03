@@ -12,19 +12,12 @@ const App: FC<{
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>
-                <OnSendTo
-                sendTos={sendTos}
-                    vdef={config[0]}
-                    vset={v => set(v as any, config[1], config[2])}
-                />
-            </Descriptions.Item>
-            <Descriptions.Item label={i18n[1]}>
                 <Space>
                     <Dropdown menu={{
                         items: [115200, 9600].map((v, k) => ({ label: v, key: k })),
-                        onClick: ({ key }) => set(config[0], Number(key), config[2])
+                        onClick: ({ key }) => set(Number(key),config[1])
                     }}>
-                        <div> {config[1]}</div>
+                        <div> {config[0]}</div>
                     </Dropdown>
                     <EditOutlined />
                 </Space>

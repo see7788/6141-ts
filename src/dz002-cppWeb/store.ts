@@ -2,7 +2,7 @@ import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
 import { reqIpcInit_t } from "@ui/type"
 import type { } from 'zustand/middleware'//调试作用
-import { config,  i18n,  state_t,qa_t } from "./t"
+import {  i18n,  state_t,qa_t } from "../dz002-cpp/t"
 type req_t = (...op: Parameters<qa_t>) => Promise<void>
 // type ExpandRecursively<T> = T extends shuobject
 //   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
@@ -21,10 +21,11 @@ interface store_t {
 // }
 //window.req=()=>console.log("stroe def")
 const useStore = create<store_t>()(immer<store_t>((seter, self) => {
-    const defReq: req_t = async (...str: any[]) => console.log("defReq", ...str)
+    const defReq: req_t = async (...str) => console.log("defReq", ...str)
     return {
         state: {
-            ...config, i18n
+            //...config, 
+            i18n
         },
         reqInit: req2 => {
             if (req2) {
@@ -39,7 +40,8 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                         console.log(c);
                         req2(c)
                     }
-                    s.req("mcu_state_get")
+                    s.req("config_get")
+                    s.req("mcu_base_subscriber")
                 })
             } else {
                 seter(s => {

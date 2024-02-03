@@ -3,8 +3,9 @@ export type mcu_ybl_idInfo_t = {
      type: number;
      state: number;
 }
+export type mcu_ybldatas_t = Record<string, mcu_ybl_idInfo_t>
 export type mcu_ybl_t = [
-     datas: Record<string, mcu_ybl_idInfo_t>,
+     datas: mcu_ybldatas_t,
      tick: number,
      tickBig: number
 ]

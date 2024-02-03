@@ -1,5 +1,6 @@
 import { PoolOptions, Pool, createPool } from 'mysql2/promise';
-export default class{
+
+class Base {
     private obj: Pool;
     constructor(public config: PoolOptions) {
         this.obj = createPool(config);
