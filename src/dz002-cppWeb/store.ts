@@ -2,14 +2,14 @@ import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
 import { reqIpcInit_t } from "@ui/type"
 import type { } from 'zustand/middleware'//调试作用
-import {  i18n,  state_t,qa_t } from "../dz002-cpp/t"
+import { config, state_t, qa_t } from "../dz002-cpp/t"
 type req_t = (...op: Parameters<qa_t>) => Promise<void>
 // type ExpandRecursively<T> = T extends shuobject
 //   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
 //   : T;
 // type demo=ExpandRecursively<qa_t>
 interface store_t {
-    state: Partial<Omit<state_t, "i18n">> & Pick<state_t, "i18n">;
+    state: Partial<state_t>;// Partial<Omit<state_t, "i18n">> & Pick<state_t, "i18n">;
     res: (jsonstr: string) => void;
     reqInit: reqIpcInit_t,
     req: req_t;
@@ -23,9 +23,8 @@ interface store_t {
 const useStore = create<store_t>()(immer<store_t>((seter, self) => {
     const defReq: req_t = async (...str) => console.log("defReq", ...str)
     return {
-        state: {
-            //...config, 
-            i18n
+        state: { 
+            i18n:config["i18n"]
         },
         reqInit: req2 => {
             if (req2) {
@@ -41,7 +40,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                         req2(c)
                     }
                     s.req("config_get")
-                    s.req("mcu_base_subscriber")
+                    // s.req("mcu_base_subscriber")
                 })
             } else {
                 seter(s => {

@@ -23,7 +23,7 @@ const App: FC = () => {
     const { token } = theme.useToken();
     const Login: FC = () => <LoadingOutlined style={{ fontSize: '50px' }} spin />
     const sendTos = [] as Array<any>// (Object.keys(state).filter(v => v.endsWith("18n") == false).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
-    const uis = [
+    const uis = state.i18n ? [
         ["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />],
         state?.mcu_base && ["mcu_base",
             <Fragment>
@@ -31,7 +31,7 @@ const App: FC = () => {
                 {state?.mcu_base_subscriber && <McuState config={state.mcu_base_subscriber} i18n={state.i18n.mcu_state} />}
             </Fragment>
         ],
-        ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("i18n_set", i18n)} />],
+        ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("config_set", i18n)} />],
         state?.mcu_net && [
             "mcu_net",
             <McuNet
@@ -60,13 +60,7 @@ const App: FC = () => {
         state?.mcu_webPageServer && ["mcu_webPageServer",
             <McuWebPageServer config={state.mcu_webPageServer} i18n={state.i18n.mcu_webPageServer} set={(...op) => req("config_set", { mcu_webPageServer: op })} />
         ],
-    ].filter((v): v is [string, JSX.Element] => {
-        return Array.isArray(v) && v.length > 0
-    }).map((c, i) => (
-        <Panel key={i} header={c[0]} extra={i}>
-            <Suspense fallback={<Login />}>{c[1]}</Suspense>
-        </Panel>
-    ))
+    ] : [["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />]]
     return <Fragment>
         <Suspense fallback={<Login />}>
             <Fragment>
@@ -94,7 +88,15 @@ const App: FC = () => {
             defaultActiveKey={[0]}
             style={{ background: token.colorBgContainer }}
         >
-            {uis}
+            {
+                uis.filter((v): v is [string, JSX.Element] => {
+                    return Array.isArray(v) && v.length > 0
+                }).map((c, i) => (
+                    <Panel key={i} header={c[0]} extra={i}>
+                        <Suspense fallback={<Login />}>{c[1]}</Suspense>
+                    </Panel>
+                ))
+            }
         </Collapse>
     </Fragment>
 }
