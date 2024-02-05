@@ -1,10 +1,11 @@
 import { FC } from 'react'
 import { Descriptions } from "antd"
-import { mcu_state_t ,mcu_stateI18n_t } from "./.t"
+import { mcu_state_t, mcu_stateI18n_t, mcu_stateI18n } from "./.t"
 const App: FC<{
     config: mcu_state_t;
-    i18n: mcu_stateI18n_t;
+    i18n?: mcu_stateI18n_t;
 }> = ({ i18n, config }) => {
+    i18n = i18n || mcu_stateI18n;
     return (
         <Descriptions>
             <Descriptions.Item label={i18n[0]}>

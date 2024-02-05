@@ -4,9 +4,9 @@ import { Collapse, theme, FloatButton } from "antd"
 import createRoot from "./protected/createApp"
 import useStore from "./store"
 const WebIpc = lazy(() => import("./protected/web_ipc"))
-const JsonEdit = lazy(() => import("./protected/jsonEdit"))
-const McuState = lazy(() => import("./protected/mcu_base_subscriber"))
+const JsonEdit = lazy(() => import("./public/jsonEdit"))
 const McuBase = lazy(() => import("./protected/mcu_base/config"))
+const McuBaseSubscriber = lazy(() => import("./protected/mcu_base/subscriber"))
 const McuNet = lazy(() => import("./protected/mcu_net/config"))
 const McuSerial = lazy(() => import("./protected/mcu_ipcSerial/config"))
 const McuYbl = lazy(() => import("./protected/mcu_ybl/config"))
@@ -23,15 +23,15 @@ const App: FC = () => {
     const { token } = theme.useToken();
     const Login: FC = () => <LoadingOutlined style={{ fontSize: '50px' }} spin />
     const sendTos = [] as Array<any>// (Object.keys(state).filter(v => v.endsWith("18n") == false).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
-    const uis = state.i18n ? [
+    const uis = [
         ["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />],
         state?.mcu_base && ["mcu_base",
             <Fragment>
                 <McuBase sendTos={sendTos} config={state.mcu_base} i18n={state.i18n.mcu_base} set={(...op) => req("config_set", { mcu_base: op })} />
-                {state?.mcu_base_subscriber && <McuState config={state.mcu_base_subscriber} i18n={state.i18n.mcu_state} />}
+                {state?.state?.mcu_base && <McuBaseSubscriber config={state.state.mcu_base} i18n={state.i18n.state.mcu_base} />}
             </Fragment>
         ],
-        ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("config_set", i18n)} />],
+        //  ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("config_set", i18n)} />],
         state?.mcu_net && [
             "mcu_net",
             <McuNet
@@ -60,7 +60,13 @@ const App: FC = () => {
         state?.mcu_webPageServer && ["mcu_webPageServer",
             <McuWebPageServer config={state.mcu_webPageServer} i18n={state.i18n.mcu_webPageServer} set={(...op) => req("config_set", { mcu_webPageServer: op })} />
         ],
-    ] : [["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />]]
+    ].filter((v): v is [string, JSX.Element] => {
+        return Array.isArray(v) && v.length > 0
+    }).map((c, i) => (
+        <Panel key={i} header={c[0]} extra={i}>
+            <Suspense fallback={<Login />}>{c[1]}</Suspense>
+        </Panel>
+    ))
     return <Fragment>
         <Suspense fallback={<Login />}>
             <Fragment>
@@ -69,8 +75,7 @@ const App: FC = () => {
                     shape="square"
                     style={{ right: 70 }}
                     onClick={() => {
-                        const { mcu_base_subscriber, ...config } = state
-                        req("config_toFileRestart", config);
+                        req("config_toFileRestart");
                     }}
                 />
                 <FloatButton
@@ -88,15 +93,7 @@ const App: FC = () => {
             defaultActiveKey={[0]}
             style={{ background: token.colorBgContainer }}
         >
-            {
-                uis.filter((v): v is [string, JSX.Element] => {
-                    return Array.isArray(v) && v.length > 0
-                }).map((c, i) => (
-                    <Panel key={i} header={c[0]} extra={i}>
-                        <Suspense fallback={<Login />}>{c[1]}</Suspense>
-                    </Panel>
-                ))
-            }
+            {uis}
         </Collapse>
     </Fragment>
 }

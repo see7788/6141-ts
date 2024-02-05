@@ -9,6 +9,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "config": {},
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@ant-design/plots": "^1.2.5",

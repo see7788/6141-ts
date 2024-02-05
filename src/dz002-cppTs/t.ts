@@ -1,9 +1,11 @@
 
 import { name, version } from "../../package.json"
 import { md5 } from "js-md5"
-import { mcu_base_t, mcu_baseI18n_t, mcu_baseI18n } from "../dz002-cppWeb/protected/mcu_base/.t"
+import {
+    mcu_base_t, mcu_baseI18n_t, mcu_baseI18n,
+    mcu_state_t, mcu_stateI18n_t, mcu_stateI18n
+} from "../dz002-cppWeb/protected/mcu_base/.t"
 import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../dz002-cppWeb/protected/mcu_net/.t"
-import { mcu_state_t, mcu_stateI18n_t, mcu_stateI18n } from "../dz002-cppWeb/protected/mcu_base_subscriber/.t"
 import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../dz002-cppWeb/protected/mcu_ipcSerial/.t"
 import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../dz002-cppWeb/protected/mcu_ybl/.t"
 import {
@@ -12,16 +14,18 @@ import {
     mcu_esServer_t, mcu_esServerI18n_t, mcu_esServerI18n
 } from "../dz002-cppWeb/protected/mcu_ipcServer/.t"
 
-export interface config_t {
+interface config_t {
     i18n: {
         mcu_base: mcu_baseI18n_t;
         mcu_net: mcu_netI18n_t;
-        mcu_state: mcu_stateI18n_t;
         mcu_serial: mcu_serialI18n_t;
         mcu_ybl: mcu_yblI18n_t;
         mcu_webPageServer: mcu_webPageServerI18n_t;
         mcu_wsServer: mcu_wsServerI18n_t;
-        mcu_esServer: mcu_esServerI18n_t
+        mcu_esServer: mcu_esServerI18n_t;
+        state: {
+            mcu_base: mcu_stateI18n_t
+        }
     };
     mcu_base: mcu_base_t;
     mcu_net: mcu_net_t;
@@ -35,12 +39,14 @@ export const config: config_t = {
     i18n: {
         mcu_base: mcu_baseI18n,
         mcu_net: mcu_netI18n,
-        mcu_state: mcu_stateI18n,
         mcu_serial: mcu_serialI18n,
         mcu_ybl: mcu_yblI18n,
         mcu_webPageServer: mcu_webPageServerI18n,
         mcu_wsServer: mcu_wsServerI18n,
-        mcu_esServer: mcu_esServerI18n
+        mcu_esServer: mcu_esServerI18n,
+        state: {
+            mcu_base: mcu_stateI18n
+        }
     },
     mcu_base: ["mcu_serial", [name, version, "dz002-cpp"].join("."), md5([name, version, "dz002-cpp"].join("."))],
     mcu_serial: [115200, "\n"],
@@ -49,27 +55,18 @@ export const config: config_t = {
     mcu_webPageServer: ["http://1.com"],
     mcu_esServer: ["/es"],
     mcu_wsServer: ["/ws"],
-
+}
+interface publish_t {
+    mcu_base: mcu_state_t
 }
 export interface state_t extends config_t {
-    mcu_base_subscriber: mcu_state_t
+    state: publish_t
 }
-export type qa_subscriber_t = <T extends "mcu_base_subscriber">(...op: [T]) => ["set", Pick<state_t, T>]
-export type qa_config_get_t = ((...op: ["config_get"]) => ["set", config_t])
-export type qa_config_set_t = ((...op: ["config_set", Pick<config_t, keyof config_t> | Partial<config_t>]) => ["set", config_t])
-export type qa_config_toFileRestart_t = (...op: ["config_toFileRestart", Partial<config_t>]) => ["set", config_t]
-export type qa_config_fromFileRestart_t = (...op: ["config_fromFileRestart"]) => ["set", config_t]
-export type qa_t =
-    qa_subscriber_t
-    | qa_config_get_t
-    | qa_config_set_t
-    | qa_config_toFileRestart_t
-    | qa_config_fromFileRestart_t
-// export type qa_t =
-//     ((...op: ["i18n_get"]) => ["set", Pick<state_t, "i18n">])
-//     | ((...op: ["i18n_set", i18n_t]) => ["set", Pick<state_t, "i18n">])
-//     | ((...op: ["config_get"]) => ["set", config_t])
-//     | ((...op: ["config_set", Pick<config_t, keyof config_t> | Partial<config_t>]) => ["set", config_t])
-//     | ((...op: ["config_toFileRestart", Partial<config_t>]) => ["set", config_t])
-//     | ((...op: ["config_fromFileRestart"]) => ["set", config_t])
-//     | ((...op: ["subscriber",boolean]) => ["set"，Pick<state_t, "mcu_state">])
+//uart wsServer wsClient esServer bleServer udpServer   
+export type on_t =
+    ((...op: ["config_get"]) => ["config_set", config_t])
+    | ((...op: ["config_set", Partial<config_t>]) => ["config_set", Partial<config_t>])
+    | ((...op: ["config_toFileRestart"]) => void)
+    | ((...op: ["config_fromFileRestart"]) => ["config_set", config_t])
+    | ((...op: [`mcu_ybl_publish`]) => ["config_set", Pick<config_t, "mcu_ybl">])//cpp的ybl调用
+    | (<T extends keyof publish_t>(...op: [`${T}_publish`]) => ["state_set", Pick<publish_t, T>])
