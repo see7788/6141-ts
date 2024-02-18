@@ -8,6 +8,7 @@ import {
 import { resolve } from "node:path"
 import react from '@vitejs/plugin-react'
 import packagejson from "./package.json"
+import tsconfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath } from 'node:url'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 // import https from 'vite-plugin-mkcert'//https
@@ -95,6 +96,7 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
             // }
         },
         plugins: [
+            tsconfigPaths(),
             react(),
             htmlConfig({
                 title,
@@ -121,12 +123,12 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
             //     template: 'treemap' // 报告类型
             // })//代码分析报告
         ],
-        resolve: {
-            alias: {
-                '@uipublic': resolve(__dirname, './src/dz002-cppWeb/public/'),
-                '@ui': resolve(__dirname, './src/dz002-cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
-            }
-        },
+        // resolve: {
+        //     alias: {
+        //         '@uipublic': resolve(__dirname, './src/dz002/cppWeb/public/'),
+        //         '@ui': resolve(__dirname, './src/dz002/cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
+        //     }
+        // },
         ssr: {},
         build: {
             minify: "terser",//清理垃圾
