@@ -18,7 +18,7 @@ import https from "@vitejs/plugin-basic-ssl"//https
 import htmlConfig from 'vite-plugin-html-config';
 import path from "path"
 import fs from "fs"
-const debug = console.dir
+const debug = console.log
 function copyFileToFile_plugin(srcpath: string, destpath: string): Plugin {
     return {
         name: 'copyFileToFile_plugin',
@@ -83,6 +83,8 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
         const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
         debug(apps)
         throw new Error("!fs.existsSync(tsxPath)")
+    }else{
+        debug("***********",tsxPath)
     }
     const title = `${packagejson.name}-${mode}`
     const buildToPath = normalizePath(outDir || path.resolve(cwdPath, `${title}-build`))
