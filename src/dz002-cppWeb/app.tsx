@@ -1,7 +1,7 @@
 import { lazy, FC, Suspense, Fragment, useState, memo } from 'react'
 import { LoadingOutlined } from "@ant-design/icons"
 import { Collapse, theme, FloatButton } from "antd"
-import createRoot from "./protected/createApp"
+import createRoot from "../createApp"
 import useStore from "./store"
 const WebIpc = lazy(() => import("./protected/web_ipc"))
 const JsonEdit = lazy(() => import("./public/jsonEdit"))

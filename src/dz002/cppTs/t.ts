@@ -1,18 +1,18 @@
 
-import { name, version } from "../../package.json"
+import { name, version } from "../../../package.json"
 import { md5 } from "js-md5"
 import {
     mcu_base_t, mcu_baseI18n_t, mcu_baseI18n,
     mcu_state_t, mcu_stateI18n_t, mcu_stateI18n
-} from "../dz002-cppWeb/protected/mcu_base/.t"
-import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../dz002-cppWeb/protected/mcu_net/.t"
-import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../dz002-cppWeb/protected/mcu_ipcSerial/.t"
-import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../dz002-cppWeb/protected/mcu_ybl/.t"
+} from "../../dz002-cppWeb/protected/mcu_base/.t"
+import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../../dz002-cppWeb/protected/mcu_net/.t"
+import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../../dz002-cppWeb/protected/mcu_ipcSerial/.t"
+import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../../dz002-cppWeb/protected/mcu_ybl/.t"
 import {
     mcu_webPageServer_t, mcu_webPageServerI18n_t, mcu_webPageServerI18n,
     mcu_wsServer_t, mcu_wsServerI18n_t, mcu_wsServerI18n,
     mcu_esServer_t, mcu_esServerI18n_t, mcu_esServerI18n
-} from "../dz002-cppWeb/protected/mcu_ipcServer/.t"
+} from "../../dz002-cppWeb/protected/mcu_ipcServer/.t"
 
 interface config_t {
     i18n: {
