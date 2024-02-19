@@ -56,14 +56,13 @@ class ResStream_analysis {
         controller.enqueue("flush");
     }
 }
-export type param_t = [
-    baudRate: number,
-    analysisParam: ResStream_analysisParam_t,
-    reqIpcInit: reqIpcInit_t,
-    res: res_t
-]
 export default (
-    ...[baudRate, analysisParam, reqIpcInit, res]: param_t
+    ...[baudRate, analysisParam, reqIpcInit, res]: [
+        baudRate: number,
+        analysisParam: ResStream_analysisParam_t,
+        reqIpcInit: reqIpcInit_t,
+        res: res_t
+    ]
 ) => {
     const [state, setState] = useState<{
         baudRate: number;
