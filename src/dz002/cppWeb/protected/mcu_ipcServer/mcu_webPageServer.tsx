@@ -14,7 +14,7 @@ const App: FC<{
                 <HoverEdit value={config[0]} jsx={
                     <Input
                         value={config[0]}
-                        bordered={false}
+                        variant="borderless"
                         onChange={v => set(v.currentTarget.value)}
                     />
                 } />

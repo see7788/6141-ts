@@ -10,7 +10,7 @@ const App: FC<{
     <Descriptions>
         <Descriptions.Item label={i18n[0]}>
             <Segmented
-                value={config[0]}
+                value={config[0].toString()}
                 options={['girl', 'boy']}
                 onChange={v => set(v as any, config[1], config[2])}
             />
@@ -27,7 +27,7 @@ const App: FC<{
                 defaultValue={config[2].replace(/\s*/g, "") || `${config[2]}`}
                 onChange={v => set(config[0], config[1], v as any)}
                 suffix={<EditOutlined />}
-                bordered={false}
+                variant="borderless"
             />
         </Descriptions.Item>
     </Descriptions>

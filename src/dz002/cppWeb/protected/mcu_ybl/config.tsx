@@ -43,7 +43,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[1]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(config[0],  v || 300, config[2])}
                         step={300}
@@ -56,7 +56,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[2]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(config[0], config[1],  v || 3000)}
                         step={100}

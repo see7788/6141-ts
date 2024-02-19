@@ -1,6 +1,6 @@
 
-import { mcu_ybl_idInfo_t, mcu_ybldatas_t, mcu_ybl_t } from "../../dz002-cppWeb/protected/mcu_ybl/.t"
-import { on_t as mcu_on_t, state_t as mcu_state_t } from "../../dz002/cppTs/t"
+import { mcu_ybl_idInfo_t, mcu_ybldatas_t, mcu_ybl_t } from "../../../dz002/cppWeb/protected/mcu_ybl/.t"
+import { on_t as mcu_on_t, state_t as mcu_state_t } from "../../../dz002/cppTs/t"
 export type { mcu_on_t }
 export type id_mcu_t = string//mac地址
 export type id_ybl_t=number//信号id

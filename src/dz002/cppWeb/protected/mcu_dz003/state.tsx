@@ -3,11 +3,11 @@ import { EditOutlined } from "@ant-design/icons"
 import { Switch, Descriptions } from 'antd';
 import { useHover } from 'usehooks-ts'
 import { Space } from "antd"
-import { mcu_dz003State_t,mcu_dz003StateI18n_t,dz003StateReqParam } from "./.t"
+import { mcu_dz003State_t,mcu_dz003StateI18n_t,qa_t } from "./.t"
 const App: FC<{
     config:mcu_dz003State_t;
     i18n: mcu_dz003StateI18n_t;
-    req:(...op:dz003StateReqParam)=>any
+    req:(...op:Parameters<qa_t>)=>any
 }> = ({ i18n, config,req }) => {
     const Component: FC<{ k: "fa" | "frequency" | "laba" | "deng" }> = ({ k }) => {
         const v = config[k].working

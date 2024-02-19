@@ -25,7 +25,7 @@ const App: FC<{
                 <HoverEdit value={config[1][0]} jsx={
                     <Input
                         value={config[1][0]}
-                        bordered={false}
+                        variant="borderless"
                         onChange={v => set(config[0], [v.currentTarget.value], config[2])}
                     />
                 } />
@@ -35,14 +35,14 @@ const App: FC<{
                     <HoverEdit value={config[2][0]} jsx={
                         <Input
                             value={config[2][0]}
-                            bordered={false}
+                            variant="borderless"
                             onChange={v => set(config[0], config[1], [v.currentTarget.value, config[2][1]])}
                         />
                     } />
                     <HoverEdit value={config[2][1]} jsx={
                         <Input
                             value={config[2][1]}
-                            bordered={false}
+                            variant="borderless"
                             onChange={v => set(config[0], config[1], [config[2][0], v.currentTarget.value])}
                         />
                     } />

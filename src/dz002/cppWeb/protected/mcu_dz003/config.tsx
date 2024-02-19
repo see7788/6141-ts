@@ -16,7 +16,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[0]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(v as number, config[1], config[2], config[3], config[4])}
                         step={1000}
@@ -30,7 +30,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[1]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(config[0], v as number, config[2], config[3], config[4])}
                         step={10}
@@ -44,7 +44,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[2]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(config[0], config[1], v || 1000, config[3], config[4])}
                         step={100}
@@ -58,7 +58,7 @@ const App: FC<{
                     <InputNumber
                         size="small"
                         value={config[3]}
-                        bordered={false}
+                        variant="borderless"
                         status="error"
                         onChange={v => set(config[0], config[1], config[2], v || 100000, config[4])}
                         step={10}

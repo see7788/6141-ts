@@ -10,7 +10,6 @@ import react from '@vitejs/plugin-react'
 import packagejson from "./package.json"
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath } from 'node:url'
-const __dirname = fileURLToPath(new URL('.', import.meta.url))
 // import https from 'vite-plugin-mkcert'//https
 import https from "@vitejs/plugin-basic-ssl"//https
 // import { visualizer } from "rollup-plugin-visualizer"
@@ -18,6 +17,7 @@ import https from "@vitejs/plugin-basic-ssl"//https
 import htmlConfig from 'vite-plugin-html-config';
 import path from "path"
 import fs from "fs"
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const debug = console.log
 function copyFileToFile_plugin(srcpath: string, destpath: string): Plugin {
     return {
@@ -71,24 +71,23 @@ function parseArgs() {
     }
     return result;
 }
-const { mode, outDir } = parseArgs()
-console.log({ mode, outDir })
+// const { mode, outDir } = parseArgs()
+// console.log({ mode, outDir })
 const webconfig: UserConfigFn = ({ command, mode }) => {
     const tsxName = "app.tsx"
     const cwdPath = normalizePath(process.cwd())
     const srcPath = normalizePath(path.resolve(cwdPath, "src"))
     const sitePath = normalizePath(path.resolve(srcPath, mode))
     const tsxPath = normalizePath(path.resolve(sitePath, tsxName))
+    debug({ command, cwdPath, tsxPath,  env: loadEnv(mode, process.cwd()) })
     if (!fs.existsSync(tsxPath)) {
         const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
         debug(apps)
-        throw new Error("!fs.existsSync(tsxPath)")
-    }else{
-        debug("***********",tsxPath)
+        throw new Error("!fs.existsSync(tsxPath) pnpm run dev --mode 带有app.tsx的目录")
     }
     const title = `${packagejson.name}-${mode}`
-    const buildToPath = normalizePath(outDir || path.resolve(cwdPath, `${title}-build`))
-    debug({ command, cwdPath, tsxPath, title, buildToPath, env: loadEnv(mode, process.cwd()) })
+    const buildToPath = normalizePath(path.resolve(cwdPath, `${title}-build`))
+    debug({ title, buildToPath })
     return {
         server: {
             open: true,
@@ -131,7 +130,6 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
         //         '@ui': resolve(__dirname, './src/dz002/cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
         //     }
         // },
-        ssr: {},
         build: {
             minify: "terser",//清理垃圾
             terserOptions: {
