@@ -6,7 +6,7 @@ import WsClient, { WebSocketServer, WebSocket } from "ws"//文档中的客户端
 import { has } from "lodash";
 //https://tunnelmole.com/  内网穿透
 // https://dujun.io/tunnelmole-example.html
-// import { tunnelmole } from 'tunnelmole';
+//import { tunnelmole } from 'tunnelmole';
 // async function init(){
 //    return await tunnelmole({
 //         port: 6227

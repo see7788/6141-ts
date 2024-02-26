@@ -2,7 +2,7 @@ import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
 import { reqIpcInit_t } from "@ui/type"
 import type { } from 'zustand/middleware'//调试作用
-import { config, state_t, on_t } from "../cppTs/t"
+import { config, state_t, on_t } from "../cppUse/t"
 type req_t = (...op: Parameters<on_t>) => Promise<void>
 // type ExpandRecursively<T> = T extends shuobject
 //   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
