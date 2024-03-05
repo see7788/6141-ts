@@ -57,17 +57,16 @@ export const config: config_t = {
 export interface state_t extends config_t {
     mcu_state: mcu_state_t,
 }
-export { type macId_t}
-export type returnBase_t=[versionId_t,macId_t]
+export { type macId_t,type versionId_t}
 type publish_t = ["mcu_state_publish", Pick<state_t, "mcu_state">]
     | ["mcu_ybldatas_publish", state_t["mcu_ybl"][0]]
 //uart wsServer wsClient esServer bleServer udpServer   
 export type on_t =
-    ((...op: [versionId_t, "config_get"]) => [...returnBase_t, "config_set", config_t])
-    | ((...op: [versionId_t, "config_set", Partial<config_t>]) => [...returnBase_t, "config_set", Partial<config_t>])
+    ((...op: [versionId_t, "config_get"]) => [versionId_t, "config_set", config_t,macId_t])
+    | ((...op: [versionId_t, "config_set", Partial<config_t>]) => [versionId_t, "config_set", Partial<config_t>,macId_t])
     | ((...op: [versionId_t, "config_toFileRestart"]) => void)
-    | ((...op: [versionId_t, "config_fromFileRestart"]) => [...returnBase_t, "config_set", config_t])
-    | ((...op: [versionId_t, ...publish_t]) => [...returnBase_t,...publish_t])
+    | ((...op: [versionId_t, "config_fromFileRestart"]) => [versionId_t, "config_set", config_t,macId_t])
+    | ((...op: [versionId_t, ...publish_t]) => [versionId_t,...publish_t,macId_t])
 
 
 // type t = [1, 2, "", ""] | [3, 4, "", ""] | [5, "", ""];

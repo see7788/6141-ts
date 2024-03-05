@@ -57,7 +57,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                 const res = JSON.parse(jsonstr) as ReturnType<on_t>
                 let use = false
                 if (res) {
-                    const [versionId2,macId2,api, info] = res;
+                    const [versionId2,api, info,macId2] = res;
                     if (["config_set","mcu_state_publish"].includes(api)) {
                         s.state = { ...s.state, ...info }
                         use = true;

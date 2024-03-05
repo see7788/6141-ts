@@ -76,8 +76,7 @@ function parseArgs() {
 const webconfig: UserConfigFn = ({ command, mode }) => {
     const tsxName = "web.tsx"
     const cwdPath = normalizePath(process.cwd())
-    const sitePath = normalizePath(path.resolve(cwdPath, "src", mode))
-    const tsxPath = normalizePath(path.resolve(sitePath, tsxName))
+    const tsxPath = normalizePath(path.resolve(cwdPath, "src", mode, tsxName))
     debug({ command, cwdPath, tsxPath, env: loadEnv(mode, process.cwd()) })
     if (!fs.existsSync(tsxPath)) {
         // const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
