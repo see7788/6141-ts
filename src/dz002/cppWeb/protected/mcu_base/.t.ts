@@ -1,15 +1,16 @@
 import { i18n_Tuple_t } from "../type"
-export type mcu_base_t = [
+export type versionId_t=string
+export type macId_t=string
+export type mcu_baseConfig_t = [
     sendTo: string,
     version: string,
-    versionId: string,
-    
+    versionId: versionId_t,
 ]
-export type mcu_baseI18n_t = i18n_Tuple_t<mcu_base_t>;
-export const mcu_baseI18n: mcu_baseI18n_t = ["转发", "版本", "版本号"]
+export type mcu_baseConfigI18n_t = i18n_Tuple_t<mcu_baseConfig_t>;
+export const mcu_baseConfigI18n: mcu_baseConfigI18n_t = ["转发", "version", "versionId"]
 
 export type mcu_state_t = [
-    macId: string,
+    macId: macId_t,
     egBit: Array<0 | 1>,
     ETHlocalIP: string,
     WiFilocalIP: string

@@ -6,7 +6,7 @@ import useStore from "./store"
 const WebIpc = lazy(() => import("./protected/web_ipc"))
 const JsonEdit = lazy(() => import("./public/jsonEdit"))
 const McuBase = lazy(() => import("./protected/mcu_base/config"))
-const McuBaseSubscriber = lazy(() => import("./protected/mcu_base/subscriber"))
+const McuBaseSubscriber = lazy(() => import("./protected/mcu_base/state"))
 const McuNet = lazy(() => import("./protected/mcu_net/config"))
 const McuSerial = lazy(() => import("./protected/mcu_ipcSerial/config"))
 const McuYbl = lazy(() => import("./protected/mcu_ybl/config"))
@@ -22,14 +22,14 @@ const App: FC = () => {
     const { Panel } = Collapse;
     const { token } = theme.useToken();
     const Login: FC = () => <LoadingOutlined style={{ fontSize: '50px' }} spin />
-    const sendTos = [] as Array<any>// (Object.keys(state).filter(v => v.endsWith("18n") == false).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
+    const sendTos = (Object.keys(state).filter(v => v.startsWith("mcu_serial") || v.startsWith("mcu_wsServer") || v.startsWith("mcu_esServer"))) as Array<any>;
     const uis: CollapseProps['items'] =
         [
             ["webIpc", <WebIpc reqIpcInit={reqIpcInit} res={res} />],
             state?.mcu_base && ["mcu_base",
                 <Fragment>
                     <McuBase sendTos={sendTos} config={state.mcu_base} i18n={state.i18n.mcu_base} set={(...op) => req("config_set", { mcu_base: op })} />
-                    {state?.state?.mcu_base && <McuBaseSubscriber config={state.state.mcu_base} i18n={state.i18n.state.mcu_base} />}
+                    {state?.mcu_state && <McuBaseSubscriber config={state.mcu_state} i18n={state.i18n.mcu_state} />}
                 </Fragment>
             ],
             //  ["mcu_i18n", <JsonEdit state={state.i18n} state_set={i18n => req("config_set", i18n)} />],
@@ -93,6 +93,7 @@ const App: FC = () => {
             </Fragment>
         </Suspense>
         <Collapse
+            bordered={false}
             defaultActiveKey={[0]}
             style={{ background: token.colorBgContainer }}
             items={uis}

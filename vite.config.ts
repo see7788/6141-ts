@@ -74,15 +74,14 @@ function parseArgs() {
 // const { mode, outDir } = parseArgs()
 // console.log({ mode, outDir })
 const webconfig: UserConfigFn = ({ command, mode }) => {
-    const tsxName = "app.tsx"
+    const tsxName = "web.tsx"
     const cwdPath = normalizePath(process.cwd())
-    const srcPath = normalizePath(path.resolve(cwdPath, "src"))
-    const sitePath = normalizePath(path.resolve(srcPath, mode))
+    const sitePath = normalizePath(path.resolve(cwdPath, "src", mode))
     const tsxPath = normalizePath(path.resolve(sitePath, tsxName))
-    debug({ command, cwdPath, tsxPath,  env: loadEnv(mode, process.cwd()) })
+    debug({ command, cwdPath, tsxPath, env: loadEnv(mode, process.cwd()) })
     if (!fs.existsSync(tsxPath)) {
-        const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
-        debug(apps)
+        // const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
+        // debug(apps)
         throw new Error("!fs.existsSync(tsxPath) pnpm run dev --mode 带有app.tsx的目录")
     }
     const title = `${packagejson.name}-${mode}`
