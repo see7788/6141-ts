@@ -79,7 +79,10 @@ const App: FC = () => {
                     shape="square"
                     style={{ right: 70 }}
                     onClick={() => {
-                        req("config_toFileRestart");
+                        req("config_toFile");
+                        setTimeout(() => {
+                            req("mcuRestart");
+                        }, 500);
                     }}
                 />
                 <FloatButton
@@ -87,7 +90,10 @@ const App: FC = () => {
                     shape="square"
                     style={{ right: 20 }}
                     onClick={() => {
-                        req("config_fromFileRestart")
+                        req("config_fromFile");
+                        setTimeout(() => {
+                            req("mcuRestart");
+                        }, 500);
                     }}
                 />
             </Fragment>

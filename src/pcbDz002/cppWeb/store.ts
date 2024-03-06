@@ -8,7 +8,7 @@ type req_t = (...op: Parameters<on_t> extends [infer versionId_t, ...infer Op]?O
 //   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
 //   : T;
 // type demo=ExpandRecursively<qa_t>
-interface state2_t extends  Partial<Omit<state_t,"i18n"|"mcu_base">>,Pick<state_t, "i18n"|"mcu_base">{
+interface state2_t extends  Partial<Omit<state_t,"i18n">>,Pick<state_t, "i18n">{
 
 }
 interface store_t {
@@ -28,7 +28,6 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
     return {
         state: {
             i18n: config["i18n"],
-            mcu_base:config["mcu_base"]
         },
         reqInit: req2 => {
             if (req2) {
@@ -44,6 +43,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                         req2(c)
                     }
                     s.req("config_get")
+                    s.req("mcu_state_publish")
                 })
             } else {
                 seter(s => {
@@ -57,7 +57,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                 const res = JSON.parse(jsonstr) as ReturnType<on_t>
                 let use = false
                 if (res) {
-                    const [versionId2,api, info,macId2] = res;
+                    const [versionId,api, info,macId] = res;
                     if (["config_set","mcu_state_publish"].includes(api)) {
                         s.state = { ...s.state, ...info }
                         use = true;

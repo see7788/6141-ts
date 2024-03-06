@@ -8,7 +8,7 @@ const App: FC<{
     i18n = i18n || mcu_stateI18n;
     const info = config.map((v, i) => {
        return <Descriptions.Item label={i18n[i]}>
-            {i===3?JSON.stringify(config[i]):config[i]}
+            {i===1?JSON.stringify(config[i]):config[i]}
         </Descriptions.Item>
     })
     return  <Descriptions>{...info}</Descriptions>

@@ -9,7 +9,47 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
-  "config": {},
+  "config": {
+    "mysql": {
+      "host": "localhost",
+      "port": 3306,
+      "user": "username",
+      "password": "password",
+      "database": "database"
+    },
+    "dz002": {
+      "html": {
+        "port": 61413
+      }
+    },
+    "dz002s": {
+      "web": {
+        "port": 61413
+      },
+      "server": {
+        "ws": {
+          "port": 61414
+        }
+      }
+    },
+    "admins": {
+      "web": {
+        "port": 61413
+      },
+      "server": {
+        "ws": {
+          "port": 61414
+        }
+      }
+    },
+    "users": {
+      "server": {
+        "ws": {
+          "port": 61414
+        }
+      }
+    }
+  },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@ant-design/plots": "^1.2.5",
