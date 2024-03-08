@@ -62,10 +62,10 @@ type publish_t = ["mcu_state_publish", Pick<state_t, "mcu_state">]
     | ["mcu_ybldatas_publish", state_t["mcu_ybl"][0]]
 //uart wsServer wsClient esServer bleServer udpServer   
 export type on_t =
-    ((...op: [versionId_t, "config_get"]) => [versionId_t, "config_set", config_t,macId_t])
-    | ((...op: [versionId_t, "config_set", Partial<config_t>]) => [versionId_t, "config_set", Partial<config_t>,macId_t])
-    | ((...op: [versionId_t, "config_fromFile"|"config_toFile"]) => [versionId_t, "config_set", config_t,macId_t])
-    | ((...op: [versionId_t, publish_t[0]]) => [versionId_t, ...publish_t,macId_t])
+    ((...op: [versionId_t, "config_get"]) => [macId_t, "config_set", config_t])
+    | ((...op: [versionId_t, "config_set", Partial<config_t>]) => [macId_t, "config_set", Partial<config_t>])
+    | ((...op: [versionId_t, "config_fromFile"|"config_toFile"]) => [macId_t, "config_set", config_t])
+    | ((...op: [versionId_t, publish_t[0]]) => [macId_t, ...publish_t])
     | ((...op: [versionId_t, "mcuRestart"]) => void)
 
 

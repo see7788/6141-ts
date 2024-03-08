@@ -41,87 +41,80 @@ class nodeServer {
     cacheInit() { }
     constructor() {
         this.dz002s = {
-            data: {
-                cache: {},
-                sql: {
-                    initCacheDb: () => { },
-                    setCacheDb: (op) => { }
-                },
-                dz002s: {
-                    ws: {
-                        server: this.wsCreate("dz002s"),
-                        clis: new Map(),
-                        on: () => {
-                            return ["dz002s_publish", this.dz002s.data.cache]
-                        },
-                        login() {
-                            return true
-                        }
-                    }
-                },
-                admins: {
-                    ws: {
-                        on: (...op) => {
-                            return ["dz002s_publish", this.dz002s.data.cache]
-                        }
-                    }
+            cache: {
+                ybls: {},
+                mcus: {}
+            },
+            on_dz002sCconnection: (c) => {
+                if (this.dz002s.cache.mcus[c]) {
+                    return true
                 }
             },
+            on_dz002s: (op) => {
+                return ["cache_set", this.dz002s.cache]
+            },
+            on_admins: (api, db) => {
+                return ["IdMoreInfo_set", this.dz002s.cache]
+            },
             ws: {
-                send(...db) {
+                server: this.wsCreate("dz002s"),
+                clis: {},
+                onConnection: (cli, mcuid) => {
+                    if (this.dz002s.on_dz002sCconnection(mcuid)) {
+                        this.dz002s.ws.clis[mcuid] = cli;
+                    } else {
+                        cli.send(["非法连接"]);
+                        cli.close();
+                    }
+                },
+                onClose: (mcuid) => {
+                    if (this.dz002s.ws.clis[mcuid]) {
+                        delete this.dz002s.ws.clis[mcuid];
+                    }
+                },
+                onMessage: () => {
+                    return ["dz002s_publish", this.dz002s.cache]
+                },
+                send(macid, ...p) {
 
                 },
-                on() { },
             }
-
         }
         this.admins = {
-            data: {
-                cache: [],
-                sql: {
-                    initCacheDb: () => { },
-                    setCacheDb: (op) => { }
-                },
-                admins: {
-                    ws: {
-                        server: this.wsCreate("admins"),
-                        clis: new Map(),
-                        login: () => { },
-                        on: () => {
-                            return ["admins_publish", this.admins.data.cache]
-                        },
-                    }
-                }
+            cache: {
+                admins: {}
+            },
+            on_adminsConnection: () => {
+                return ["cache_set", { ... this.dz002s.cache, ...this.admins.cache }]
             },
             ws: {
-                on() {
+                server: this.wsCreate("admins"),
+                clis: new Map(),
+                onConnection: () => { },
+                onMessage: () => {
                     // if (op[0] === "mcu_ybl_publish" && op[2] && this.state.dz002mcus.info?.[op[2]]) {
                     //     //this.webUser_ws.publish(this.state.dz002mcus.info?.[op[2]);
                     //     //admin_ws.publish(this.info);
                     // }
+                    return ["admins_publish", this.admins.cache]
                 },
+
                 send(...db) {
 
                 }
             }
         }
         this.users = {
-            data: {
-                users: {
-                    ws: {
-                        server: this.wsCreate("users"),
-                    }
-                }
-
-            },
             ws: {
+                server: this.wsCreate("users"),
                 send: (...db) => {
-                    this.users.data.users.ws.server.clients.forEach((cli) => {
+                    this.users.ws.server.clients.forEach((cli) => {
                         if (cli.readyState === WebSocket.OPEN) {
                             cli.send(JSON.stringify(db), { binary: false });
                         }
                     })
-                }
+                },
+                onConnection: () => { }
             }
         }
         this.cacheInit();
@@ -130,13 +123,14 @@ class nodeServer {
         this.user_connection();
     }
     dz002_connection() {
-        this.dz002s.data.dz002s.ws.server.on('connection', (cli, req) => {
+        this.dz002s.ws.server.on('connection', (cli, req) => {
             console.log(cli.url, req.url)
+
             cli.onerror = (e) => console.log('ws onerror %s', e)
             cli.on("message", message => {
                 try {
                     const str = message.toString();
-                    const msg = JSON.parse(str) as Parameters<Store_t["dz002s"]["ws"]["on"]>
+                    const msg = JSON.parse(str) as Parameters<Store_t["dz002s"]["ws"]["onMessage"]>
                     cli.send("非法访问")
                 } catch (e) {
                     cli.send("非法访问")
@@ -145,13 +139,13 @@ class nodeServer {
         })
     }
     admin_connection() {
-        this.admins.data.admins.ws.server.on('connection', (cli, req) => {
+        this.admins.ws.server.on('connection', (cli, req) => {
 
             cli.onerror = (e) => console.log('ws onerror %s', e)
             cli.on("message", message => {
                 try {
                     const str = message.toString();
-                    const msg = JSON.parse(str) as Parameters<Store_t["admins"]["ws"]["on"]>
+                    const msg = JSON.parse(str) as Parameters<Store_t["admins"]["ws"]["onMessage"]>
                     cli.send("非法访问")
                 } catch (e) {
                     cli.send("非法访问")
@@ -160,7 +154,7 @@ class nodeServer {
         })
     }
     user_connection() {
-        this.users.data.users.ws.server.on('connection', (cli, req) => {
+        this.users.ws.server.on('connection', (cli, req) => {
             cli.onerror = (e) => console.log('ws onerror %s', e)
             // cli.on("message", message => {
             //     try{

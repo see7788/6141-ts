@@ -43,7 +43,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                         req2(c)
                     }
                     s.req("config_get")
-                    s.req("mcu_state_publish")
+                    //s.req("mcu_state_publish")
                 })
             } else {
                 seter(s => {
@@ -57,7 +57,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                 const res = JSON.parse(jsonstr) as ReturnType<on_t>
                 let use = false
                 if (res) {
-                    const [versionId,api, info,macId] = res;
+                    const [macid,api, info] = res;
                     if (["config_set","mcu_state_publish"].includes(api)) {
                         s.state = { ...s.state, ...info }
                         use = true;
