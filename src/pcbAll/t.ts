@@ -1,80 +1,93 @@
 
-import { mcu_ybl_idInfo_t as yblIdBaseInfo_t, mcu_ybldatas_t } from "../pcbDz002/cppWeb/protected/mcu_ybl/.t"
+import { mcu_ybl_idInfo_t as yblIdBaseInfo_t, mcu_ybldatas_t as yblstate_t } from "../pcbDz002/cppWeb/protected/mcu_ybl/.t"
 import { macId_t, on_t as dz002_on_t } from "../pcbDz002/cppUse/t"
 import type WsClient from "ws"
-type yblId_t = keyof mcu_ybldatas_t
-interface yblIdMoreInfo_t {
-    id: yblId_t
-    //用途
-    //位置
-}
-interface yblIdInfo_t extends yblIdBaseInfo_t, yblIdMoreInfo_t { }
-interface mcuIdMoreInfo_t {
-    id: macId_t
+type yblId_t = keyof yblstate_t
+type userId_t = string
+type dz002s_t = Record<macId_t, {
+    id: macId_t;
+    yblsconfig: Record<yblId_t, {
+        //用途
+        //位置
+    }>;
+    yblstate: yblstate_t;
     //房间名
     //楼层
     //男女
-}
-interface mcuIdInfo_t extends mcuIdMoreInfo_t { }
-interface IdMoreInfo_t {
-    ybl: yblIdMoreInfo_t,
-    mcu: mcuIdMoreInfo_t
-}
-type user_t = [admin: string, pass: string]
-interface cache_t {
-    ybls: Record<yblId_t, yblIdInfo_t>;
-    mcus: Record<macId_t, mcuIdInfo_t>;
-    admins: Record<string, user_t>
-}
+}>
+type admins_t = Record<userId_t, {
+    id: userId_t;
+    pass: string;
+}>;
+export type State_t = {
+    dz002s: dz002s_t;
+    admins: admins_t;
+};
 export interface Store_t {
+    state: State_t;
+    on: {
+        admins_connectionIng: (
+            id: userId_t, connectionIng: boolean
+        ) => void | ["cache_set", Pick<State_t, "admins">];//user.ws.send.toALL
+        dz002s_connectionIng: (
+            id: macId_t, connectionIng?: boolean
+        ) => void | ["cache_set", Pick<State_t, "dz002s">];//user.ws.send.toALL
+        mcu_ybldatas_publish: (
+            ...op: Extract<ReturnType<dz002_on_t>, ["mcu_ybldatas_publish", ...any[]]>
+        ) => void | ["cache_set", Pick<State_t, "dz002s">];//admin.ws.send.toALL&user.ws.send.toALL
+        yblsconfig_set: (
+            ...op: ["yblsconfig_set", State_t["dz002s"][macId_t]["yblsconfig"], macId_t]
+        ) => void | ["cache_set", Pick<State_t, "dz002s">];//调用admin.ws.send.toALL&user.ws.send.toALL
+    };
+    //dz002s设备
     dz002s: {
-        cache: Pick<cache_t, "ybls" | "mcus">
-        on_dz002sCconnection: (...c: [macId_t]) => true|void
-        on_dz002s: (...op: Extract<ReturnType<dz002_on_t>, [macId_t, "mcu_ybldatas_publish", ...any[]]>) => ["cache_set", Partial<Store_t["dz002s"]["cache"]>]//admin.ws.send&user.ws.send
-        on_admins: <K extends keyof IdMoreInfo_t>(...op: ["IdMoreInfo_set", Pick<IdMoreInfo_t, K>]) => ["IdMoreInfo_set", Partial<Store_t["dz002s"]["cache"]>]//调用admin.ws.send&user.ws.send
         ws: {
             server: WsClient.Server;
-            clis: Record<macId_t, WsClient>;
-            onConnection: (
-                ...op: [WsClient,...Parameters<Store_t["dz002s"]["on_dz002sCconnection"]>]//调用if(!dz002s.connection())掐断
-            ) => void;
-            onClose:(cli:macId_t)=>void;
-            onMessage: ((
-                ...op: Parameters<Store_t["dz002s"]["on_dz002s"]>//调用
-            ) => void)
-            | ((
-                ...op: Exclude<ReturnType<dz002_on_t>, void | Parameters<Store_t["dz002s"]["on_admins"]>>//调用admin.ws.send
-            ) => void)
-            send: (...op: [macId_t,...Parameters<dz002_on_t>]) => void;
+            clis: Map<macId_t, WsClient>;
+            sendTo: (...op: Parameters<dz002_on_t>) => void
+            onMessage: (
+                ...op:
+                    Parameters<Store_t["on"]["mcu_ybldatas_publish"]>//调用
+                //   | Exclude<ReturnType<dz002_on_t>, void | Parameters<Store_t["cache"]["mcu_ybldatas_publish"]>>//调用admins.ws.send.toAll
+            ) => void
         };
     };
+    //管理员
     admins: {
-        cache: Pick<cache_t, "admins">;
-        on_adminsConnection: (...c: [user_t]) => void | ["cache_set", cache_t];
         ws: {
             server: WsClient.Server;
             clis: Map<string, WsClient>;
-            onConnection: (
-                ...c: Parameters<Store_t["admins"]["on_adminsConnection"]>//if(admins.adminsConnection()){admins.ws.send}else{掐断}
-            ) => void;
-            onMessage: ((...op: Parameters<
-                dz002_on_t |
-                Store_t["dz002s"]["on_admins"] //调用
-            >) => void);
-            send: (...op: Exclude<ReturnType<
-                dz002_on_t |
-                Store_t["dz002s"]["on_dz002s"] |
-                Store_t["dz002s"]["on_admins"] |
-                Store_t["admins"]["on_adminsConnection"]
-            >, void | Parameters<Store_t["dz002s"]["on_dz002s"]>>
+            onMessage: (
+                ...op:
+                    Parameters<Store_t["on"]["yblsconfig_set"]>
+                    | Parameters<Store_t["dz002s"]["ws"]["sendTo"]>
+            ) => void
+            sendToAll: (...op:
+                Exclude<ReturnType<
+                    dz002_on_t
+                    | Store_t["on"]["dz002s_connectionIng"]
+                    | Store_t["on"]["admins_connectionIng"]
+                    | Store_t["on"]["mcu_ybldatas_publish"]
+                    | Store_t["on"]["yblsconfig_set"]
+                >
+                    ,
+                    void | Parameters<Store_t["on"]["mcu_ybldatas_publish"]>
+                >
             ) => void;
         }
     };
+    //访客
     users: {
         ws: {
             server: WsClient.Server;
-            onConnection: () => void;
-            send: (...op: ReturnType<Store_t["dz002s"]["on_dz002s"] | Store_t["dz002s"]["on_admins"]>) => void;
+            sendToAll: (
+                ...op: Exclude<ReturnType<
+                    Store_t["on"]["mcu_ybldatas_publish"]
+                    | Store_t["on"]["yblsconfig_set"]
+                >
+                    ,
+                    void>
+            ) => void;
         }
-    };
+    }
 }

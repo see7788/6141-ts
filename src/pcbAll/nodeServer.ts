@@ -26,9 +26,18 @@ import { has } from "lodash";
 // });
 type configBase_t = typeof configBase["config"]
 class nodeServer {
-    dz002s: Store_t["dz002s"]
-    admins: Store_t["admins"]
-    users: Store_t["users"]
+    cache
+    on
+    dz002s
+    admins
+    users
+    constructor() {
+        this.cache = this.cacheInit();
+        this.on = this.onInit();
+        this.dz002s = this.dz002sInit();
+        this.admins = this.adminsInit();
+        this.users = this.usersInit();
+    }
     wsCreate(name: keyof Pick<configBase_t, "dz002s" | "admins" | "users">) {
         const obj = new WebSocketServer(
             {
@@ -38,134 +47,146 @@ class nodeServer {
         );
         return obj
     }
-    cacheInit() { }
-    constructor() {
-        this.dz002s = {
-            cache: {
-                ybls: {},
-                mcus: {}
-            },
-            on_dz002sCconnection: (c) => {
-                if (this.dz002s.cache.mcus[c]) {
-                    return true
-                }
-            },
-            on_dz002s: (op) => {
-                return ["cache_set", this.dz002s.cache]
-            },
-            on_admins: (api, db) => {
-                return ["IdMoreInfo_set", this.dz002s.cache]
-            },
-            ws: {
-                server: this.wsCreate("dz002s"),
-                clis: {},
-                onConnection: (cli, mcuid) => {
-                    if (this.dz002s.on_dz002sCconnection(mcuid)) {
-                        this.dz002s.ws.clis[mcuid] = cli;
-                    } else {
-                        cli.send(["非法连接"]);
-                        cli.close();
-                    }
-                },
-                onClose: (mcuid) => {
-                    if (this.dz002s.ws.clis[mcuid]) {
-                        delete this.dz002s.ws.clis[mcuid];
-                    }
-                },
-                onMessage: () => {
-                    return ["dz002s_publish", this.dz002s.cache]
-                },
-                send(macid, ...p) {
-
-                },
-            }
+    cacheInit() {
+        const cache: Store_t["cache"] = {
+            dz002s: {},
+            admins: {},
         }
-        this.admins = {
-            cache: {
-                admins: {}
-            },
-            on_adminsConnection: () => {
-                return ["cache_set", { ... this.dz002s.cache, ...this.admins.cache }]
-            },
-            ws: {
-                server: this.wsCreate("admins"),
-                clis: new Map(),
-                onConnection: () => { },
-                onMessage: () => {
-                    // if (op[0] === "mcu_ybl_publish" && op[2] && this.state.dz002mcus.info?.[op[2]]) {
-                    //     //this.webUser_ws.publish(this.state.dz002mcus.info?.[op[2]);
-                    //     //admin_ws.publish(this.info);
-                    // }
-                    return ["admins_publish", this.admins.cache]
-                },
-
-                send(...db) {
-
-                }
-            }
-        }
-        this.users = {
-            ws: {
-                server: this.wsCreate("users"),
-                send: (...db) => {
-                    this.users.ws.server.clients.forEach((cli) => {
-                        if (cli.readyState === WebSocket.OPEN) {
-                            cli.send(JSON.stringify(db), { binary: false });
-                        }
-                    })
-                },
-                onConnection: () => { }
-            }
-        }
-        this.cacheInit();
-        this.dz002_connection();
-        this.admin_connection();
-        this.user_connection();
+        return cache
     }
-    dz002_connection() {
-        this.dz002s.ws.server.on('connection', (cli, req) => {
-            console.log(cli.url, req.url)
+    onInit() {
+        const on: Store_t["on"] = {
+            dz002s_connectionIng: (macId, c) => { },
+            admins_connectionIng: (userId, c) => { },
+            mcu_ybldatas_publish: (_, yblstate, macId) => {
+                if (this.cache.dz002s[macId]) {
+                    this.cache.dz002s[macId].yblstate = yblstate;
+                    const c2 = ["cache_set", { dz002s: { [macId]: this.cache.dz002s[macId] } }] as const
+                    this.users.sendToAll(...c2);
+                    this.admins.sendToAll(...c2);
+                    return c2 as any
+                }
+            },
+            yblsconfig_set: (_, yblsconfig, macId) => {
+                if (this.cache.dz002s[macId]) {
+                    this.cache.dz002s[macId].yblsconfig = yblsconfig;
+                    const c2 = ["cache_set", { dz002s: { [macId]: this.cache.dz002s[macId] } }] as const
+                    this.users.sendToAll(...c2);
+                    this.admins.sendToAll(...c2);
+                    return c2 as any
+                }
+            }
+        }
+        return on;
+    }
+    dz002sInit() {
+        const c: Store_t["dz002s"]["ws"] = {
+            server: this.wsCreate("dz002s"),
+            clis: new Map(),
+            // sendTo(macid, ...op) {
+            //     const cli = c.clis.get(macid);
+            //     if (cli && cli.readyState === WebSocket.OPEN) {
+            //         cli.send(JSON.stringify(op), { binary: false });
+            //     }
+            // },
+            onMessage(...op) {
 
+            }
+        }
+        c.server.on('connection', (cli, req) => {
+            const macid = cli.url
+            console.log(cli.url, req.url)
             cli.onerror = (e) => console.log('ws onerror %s', e)
+            if (this.on.dz002s_connectionIng(macid)) {
+                c.clis.set(macid, cli);
+            }
+            cli.on("close", e => {
+                if (this.on.dz002s_connectionIng(macid)) {
+                    c.clis.delete(macid);
+                }
+            })
             cli.on("message", message => {
                 try {
                     const str = message.toString();
                     const msg = JSON.parse(str) as Parameters<Store_t["dz002s"]["ws"]["onMessage"]>
-                    cli.send("非法访问")
+                    if (msg[0] === "mcu_ybldatas_publish") {
+                        this.on.mcu_ybldatas_publish(...msg);
+                    }
                 } catch (e) {
-                    cli.send("非法访问")
+                    cli.send(["json error"])
                 }
             })
         })
+        return c
     }
-    admin_connection() {
-        this.admins.ws.server.on('connection', (cli, req) => {
+    adminsInit() {
+        const c: Store_t["admins"]["ws"] = {
+            server: this.wsCreate("admins"),
+            clis: new Map(),
+            sendToAll(...op) {
+                c.server.clients.forEach(cli => {
+                    if (cli && cli.readyState === WebSocket.OPEN) {
+                        cli.send(JSON.stringify(op), { binary: false });
+                    }
+                })
+            },
+            onMessage(...op) {
 
+            }
+        }
+        c.server.on('connection', (cli, req) => {
+            const macid = cli.url
+            console.log(cli.url, req.url)
             cli.onerror = (e) => console.log('ws onerror %s', e)
+            if (this.on.dz002s_connectionIng(macid)) {
+                c.clis.set(macid, cli);
+            }
+            cli.on("close", e => {
+                if (this.on.dz002s_connectionIng(macid)) {
+                    c.clis.delete(macid);
+                }
+            })
             cli.on("message", message => {
                 try {
                     const str = message.toString();
                     const msg = JSON.parse(str) as Parameters<Store_t["admins"]["ws"]["onMessage"]>
-                    cli.send("非法访问")
+                    // if (msg[0] === "mcu_ybldatas_publish") {
+                    //     // this.cache.mcu_ybldatas_publish(...msg);
+                    // } else {
+                    //     //c.send.
+                    // }
                 } catch (e) {
-                    cli.send("非法访问")
+                    cli.send(["json error"])
                 }
             })
         })
+        return c;
     }
-    user_connection() {
-        this.users.ws.server.on('connection', (cli, req) => {
+    usersInit() {
+        const c: Store_t["users"]["ws"] = {
+            server: this.wsCreate("users"),
+            sendToAll(...op) {
+                this.server.clients.forEach(cli => {
+                    if (cli && cli.readyState === WebSocket.OPEN) {
+                        cli.send(JSON.stringify(op), { binary: false });
+                    }
+                })
+            }
+        }
+        c.server.on('connection', (cli, req) => {
+            const macid = cli.url
+            console.log(cli.url, req.url)
             cli.onerror = (e) => console.log('ws onerror %s', e)
-            // cli.on("message", message => {
-            //     try{
-            //         const str = message.toString();
-            //         const msg = JSON.parse(str) as Parameters<Store_t["user"]["ws"]["fun"]["on"]>
-            //         cli.send("非法访问")
-            //     }catch(e){
-            //         cli.send("非法访问")
-            //     }
-            // })
+            cli.on("message", message => {
+                try {
+                    const str = message.toString();
+                    console.log(str);
+                } catch (e) {
+                    cli.send(["json error"])
+                }
+            })
         })
+        return c;
     }
 }
 
