@@ -1,4 +1,4 @@
-import { Store_t as Store_t1, State_t as State_t1 } from "../t"
+import { Store_t as Store_t1, State_t as State_t1 } from "../node/t"
 import { State_t as State_t2 ,config} from "../../pcbDz002/cppUse/t"
 import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
@@ -35,7 +35,7 @@ export default create<Store_t>()(immer<Store_t>((seter, self) => {
         state: {
             i18n:config["i18n"],
             dz002s: {},
-            admins:{}
+            ers:{}
         },
         send(){},
     }
