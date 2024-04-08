@@ -1,8 +1,8 @@
 import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
-import { reqIpcInit_t } from "@ui/type"
+import { reqIpcInit_t } from "./protected/type"
 import type { } from 'zustand/middleware'//调试作用
-import { config,State_t, on_t,macId_t } from "../cppUse/t"
+import { config,State_t, on_t} from "../cpp/t"
 // type req_t = (...op: Parameters<on_t> extends [infer versionId_t, ...infer Op]?Op:never) => Promise<void>
 type req_t = (...op:  [...Exclude<Parameters<on_t>,void>]) => Promise<void>
 // type ExpandRecursively<T> = T extends shuobject
@@ -61,7 +61,7 @@ const useStore = create<store_t>()(immer<store_t>((seter, self) => {
                     if (["initGet","config_set","mcu_state_publish"].includes(api)) {
                         s.state = { ...s.state, ...info }
                         use = true;
-                    }else if(api==="mcu_ybldatas_publish"&&s.state?.mcu_ybl){
+                    }else if(api==="dz002s_yblState_publish"&&s.state?.mcu_ybl){
                         s.state.mcu_ybl[0]=info;
                         use = true;
                     }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 let obj: EventSource;
-import { res_t } from "@ui/type"
-import { tokenIp } from "@uipublic/toolFun"
+import { res_t } from "../../type"
+import { tokenIp } from "../../../public/toolFun"
 function readyState(): Promise<void> {
     return new Promise((ok) => {
         const loop = setInterval(() => {

@@ -8,10 +8,10 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "paths": {
-      "@uipublic/*": ["./src/pcbDz002/cppWeb/public/*"],
-      "@ui/*": ["./src/pcbDz002/cppWeb/protected/*"],
-    },
+    // "paths": {
+    //   "@uipublic/*": ["./src/pcbDz002/web/public/*"],
+    //   "@ui/*": ["./src/pcbDz002/web/protected/*"],
+    // },
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,

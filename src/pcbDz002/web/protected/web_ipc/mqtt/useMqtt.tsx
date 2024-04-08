@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { reqIpcInit_t, res_t } from "@ui/type"
-import { tokenIp } from "@uipublic/toolFun"
+import { reqIpcInit_t, res_t } from "../../type"
+import { tokenIp } from "../../../public/toolFun"
 import mqtt, { MqttClient, ISubscriptionGrant } from "mqtt"
 let obj: MqttClient;
 export type param_t = [reqIpcInit: reqIpcInit_t, res: res_t]

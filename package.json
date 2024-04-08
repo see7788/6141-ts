@@ -5,10 +5,10 @@
   "description": "esno src/store.t.ts vite的核心用于执行ts,\"publishConfig\": {\"registry\": \"https://registry.npmjs.org/\"},",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "vite --host 0.0.0.0",
+    "web": "vite --host 0.0.0.0",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "server":"nodemon --exec 'esno ./src/pcbAll/node/server.ts'"
+    "server": "nodemon --exec esno ./src/pcbAll/node/server.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

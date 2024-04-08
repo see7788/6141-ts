@@ -1,11 +1,11 @@
 import { lazy, FC, Suspense, Fragment, useState, memo } from 'react'
-import { reqIpcInit_t, res_t } from "@ui/type"
+import { reqIpcInit_t, res_t } from "../type"
 import { Space, Collapse, theme, Button, Tooltip, FloatButton, Segmented, Input } from "antd"
 import UseWebSerial from "./webSerial/useWebSerial"
 import UseWebSocket from "./webSocket/useWebSocket"
 import UseWebEventSource from "./eventSource/useEventSource"
 import UseMqtt from "./mqtt/useMqtt"
-import InputIp from "@uipublic/InputIp"
+import InputIp from "../../public/InputIp"
 type param_t = { reqIpcInit: reqIpcInit_t, res: res_t }
 const App: FC<param_t> = memo(({ reqIpcInit, res }) => {
     const css: React.CSSProperties = {

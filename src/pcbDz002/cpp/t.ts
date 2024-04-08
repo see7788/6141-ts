@@ -1,19 +1,19 @@
 
-import { name, version } from "../../../package.json"
+import { name, version } from "../../../../package.json"
 import { md5 } from "js-md5"
 import {
-    macId_t, versionId_t,
+    versionId_t,
     mcu_baseConfig_t, mcu_baseConfigI18n_t, mcu_baseConfigI18n,
     mcu_state_t, mcu_stateI18n_t, mcu_stateI18n
-} from "../cppWeb/protected/mcu_base/.t"
-import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../cppWeb/protected/mcu_net/.t"
-import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../cppWeb/protected/mcu_ipcSerial/.t"
-import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../cppWeb/protected/mcu_ybl/.t"
+} from "../web/protected/mcu_base/.t"
+import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../web/protected/mcu_net/.t"
+import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../web/protected/mcu_ipcSerial/.t"
+import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../web/protected/mcu_ybl/.t"
 import {
     mcu_webPageServer_t, mcu_webPageServerI18n_t, mcu_webPageServerI18n,
     mcu_wsServer_t, mcu_wsServerI18n_t, mcu_wsServerI18n,
     mcu_esServer_t, mcu_esServerI18n_t, mcu_esServerI18n
-} from "../cppWeb/protected/mcu_ipcServer/.t"
+} from "../web/protected/mcu_ipcServer/.t"
 interface config_t {
     i18n: {
         mcu_base: mcu_baseConfigI18n_t;
@@ -57,17 +57,17 @@ export const config: config_t = {
 export interface State_t extends config_t {
     mcu_state: mcu_state_t,
 }
-export { type macId_t, type versionId_t }
+export { type versionId_t }
 type publish_t = ["mcu_state_publish", Pick<State_t, "mcu_state">]
-    | ["mcu_ybldatas_publish", State_t["mcu_ybl"][0]]
+    | ["dz002s_yblState_publish", state: State_t["mcu_ybl"][0]]
 //uart wsServer wsClient esServer bleServer udpServer   
 export type on_t =
-    ((...op: ["config_get"]) => ["config_set", config_t, macId_t])
-    | ((...op: ["config_set", Partial<config_t>]) => ["config_set", Partial<config_t>, macId_t])
-    | ((...op: ["config_fromFile" | "config_toFile"]) => ["config_set", config_t, macId_t])
+    ((...op: ["config_get"]) => ["config_set", config_t])
+    | ((...op: ["config_set", Partial<config_t>]) => ["config_set", Partial<config_t>])
+    | ((...op: ["config_fromFile" | "config_toFile"]) => ["config_set", config_t])
     | ((...op: ["mcuRestart"]) => void)
-    | ((...op: [publish_t[0]]) => [...publish_t, macId_t])
-    | ((...op: ["initGet", versionId_t]) => ["initGet", State_t, macId_t])
+    | ((...op: [publish_t[0]]) => [...publish_t])
+    | ((...op: ["initGet", versionId_t]) => ["initGet", State_t])
 
 
 // type t = [1, 2, "", ""] | [3, 4, "", ""] | [5, "", ""];
