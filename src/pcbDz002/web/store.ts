@@ -1,7 +1,7 @@
 import { immer } from 'zustand/middleware/immer'
 import { create } from "zustand"
-import { reqIpcInit_t } from "./protected/type"
 import type { } from 'zustand/middleware'//调试作用
+import { reqIpcInit_t } from "./protected/type"
 import { config,State_t, on_t} from "../cpp/t"
 // type req_t = (...op: Parameters<on_t> extends [infer versionId_t, ...infer Op]?Op:never) => Promise<void>
 type req_t = (...op:  [...Exclude<Parameters<on_t>,void>]) => Promise<void>
@@ -12,6 +12,7 @@ type req_t = (...op:  [...Exclude<Parameters<on_t>,void>]) => Promise<void>
 interface state2_t extends  Partial<Omit<State_t,"i18n">>,Pick<State_t, "i18n">{
 
 }
+
 interface store_t {
     state: state2_t;
     res: (jsonstr: string) => void;

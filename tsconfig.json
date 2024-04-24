@@ -10,7 +10,6 @@
     ],
     // "paths": {
     //   "@uipublic/*": ["./src/pcbDz002/web/public/*"],
-    //   "@ui/*": ["./src/pcbDz002/web/protected/*"],
     // },
     "allowJs": false,
     "skipLibCheck": true,

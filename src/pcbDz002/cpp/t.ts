@@ -1,11 +1,13 @@
 
 import { name, version } from "../../../../package.json"
 import { md5 } from "js-md5"
+import rootconfig from "../../config"
 import {
     versionId_t,
     mcu_baseConfig_t, mcu_baseConfigI18n_t, mcu_baseConfigI18n,
     mcu_state_t, mcu_stateI18n_t, mcu_stateI18n
 } from "../web/protected/mcu_base/.t"
+import {mcu_wsClinet_t,mcu_wsClinetI18n_t,mcu_wsClinetI18n} from "../web/protected/mcu_ipcClient/.t"
 import { mcu_net_t, mcu_netI18n_t, mcu_netI18n } from "../web/protected/mcu_net/.t"
 import { mcu_serial_t, mcu_serialI18n_t, mcu_serialI18n } from "../web/protected/mcu_ipcSerial/.t"
 import { mcu_ybl_t, mcu_yblI18n_t, mcu_yblI18n, qa_t as mcu_ybl_qa_t } from "../web/protected/mcu_ybl/.t"
@@ -23,6 +25,7 @@ interface config_t {
         mcu_webPageServer: mcu_webPageServerI18n_t;
         mcu_wsServer: mcu_wsServerI18n_t;
         mcu_esServer: mcu_esServerI18n_t;
+        mcu_wsClient:mcu_wsClinetI18n_t;
         mcu_state: mcu_stateI18n_t
     };
     mcu_base: mcu_baseConfig_t;
@@ -32,9 +35,16 @@ interface config_t {
     mcu_webPageServer: mcu_webPageServer_t;
     mcu_esServer: mcu_esServer_t;
     mcu_wsServer: mcu_wsServer_t;
+    mcu_wsClinet:mcu_wsClinet_t
 }
 const versionStr = [name, version, "dz002-cpp"].join(".");
 export const versionId: versionId_t = md5(versionStr)
+function mcu_webPageServerparam():mcu_wsClinet_t{
+    const c=rootconfig.pcbDz002s.server.wsuri.split(":")
+    const c2:mcu_wsClinet_t=[c[1].slice(2),Number(c[2])]
+    //console.log(import.meta,rootconfig.pcbDz002s.server.wsuri.split(":"),c2);
+    return c2
+}
 export const config: config_t = {
     i18n: {
         mcu_base: mcu_baseConfigI18n,
@@ -44,15 +54,17 @@ export const config: config_t = {
         mcu_webPageServer: mcu_webPageServerI18n,
         mcu_wsServer: mcu_wsServerI18n,
         mcu_esServer: mcu_esServerI18n,
+        mcu_wsClient:mcu_wsClinetI18n,
         mcu_state: mcu_stateI18n
     },
-    mcu_base: ["mcu_serial", versionStr, versionId],
+    mcu_base: ["mcu_wsClient", versionStr, versionId],
     mcu_serial: [115200, "\n"],
-    mcu_net: ["ap", ["apname"], ["shuzijia", "80508833"]],
+    mcu_net: ["sta", ["apname"], ["shuzijia", "80508833"]],
     mcu_ybl: [{}, 600, 500000],
-    mcu_webPageServer: ["http://1.com"],
+    mcu_webPageServer: [rootconfig.pcbDz002.web.uri],
     mcu_esServer: ["/es"],
     mcu_wsServer: ["/ws"],
+    mcu_wsClinet:mcu_webPageServerparam()
 }
 export interface State_t extends config_t {
     mcu_state: mcu_state_t,
@@ -66,7 +78,7 @@ export type on_t =
     | ((...op: ["config_set", Partial<config_t>]) => ["config_set", Partial<config_t>])
     | ((...op: ["config_fromFile" | "config_toFile"]) => ["config_set", config_t])
     | ((...op: ["mcuRestart"]) => void)
-    | ((...op: [publish_t[0]]) => [...publish_t])
+    | ((...op: [publish_t[0]]) => publish_t)
     | ((...op: ["initGet", versionId_t]) => ["initGet", State_t])
 
 

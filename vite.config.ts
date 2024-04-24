@@ -5,6 +5,7 @@ import {
     UserConfigFn,
     normalizePath,
 } from 'vite'
+
 import { resolve } from "node:path"
 import react from '@vitejs/plugin-react'
 import packagejson from "./package.json"
@@ -17,6 +18,20 @@ import https from "@vitejs/plugin-basic-ssl"//https
 import htmlConfig from 'vite-plugin-html-config';
 import path from "path"
 import fs from "fs"
+import os from 'os';
+
+function getLocalIPv4() {
+    const interfaces = os.networkInterfaces();
+    for (const iface of Object.values(interfaces)) {
+        for (const config of iface) {
+            if (config.family === 'IPv4' && !config.internal) {
+                return config.address;
+            }
+        }
+    }
+    return '127.0.0.1'; // 如果没有找到，返回本地回环地址
+}
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const debug = console.log
 function copyFileToFile_plugin(srcpath: string, destpath: string): Plugin {
@@ -77,19 +92,22 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
     const tsxName = "web.tsx"
     const cwdPath = normalizePath(process.cwd())
     const tsxPath = normalizePath(path.resolve(cwdPath, "src", mode, tsxName))
-    debug({ command, cwdPath, tsxPath, env: loadEnv(mode, process.cwd()) })
+    debug({ mode,command, cwdPath, tsxPath, env: loadEnv(mode, process.cwd()) })
     if (!fs.existsSync(tsxPath)) {
         // const apps = fs.readdirSync(srcPath).filter(v => fs.existsSync(path.resolve(srcPath, v, tsxName))).map(v => `pnpm run dev --mode ${v}`);
         // debug(apps)
         throw new Error("!fs.existsSync(tsxPath) pnpm run dev --mode 带有app.tsx的目录")
     }
-    const title = `${packagejson.name}-${mode}`
+    const title = `${packagejson.name}/${mode}`
     const buildToPath = normalizePath(path.resolve(cwdPath, `${title}-build`))
-    debug({ title, buildToPath })
+    // debug({ title, buildToPath })
+    //console.log(import.meta,"/////2222222//////")
+    // const env = loadEnv(mode, process.cwd(), '')
     return {
         server: {
+            host: getLocalIPv4(),
             open: true,
-            https: true,
+            https: mode=="pcbDz002/web",
             // proxy: {
             //     '/api': 'http://localhost:3000'
             // }
@@ -122,12 +140,6 @@ const webconfig: UserConfigFn = ({ command, mode }) => {
             //     template: 'treemap' // 报告类型
             // })//代码分析报告
         ],
-        // resolve: {
-        //     alias: {
-        //         '@uipublic': resolve(__dirname, './src/dz002/cppWeb/public/'),
-        //         '@ui': resolve(__dirname, './src/dz002/cppWeb/protected/'),//tsconfig.ts的paths加上 "@ui/*": ["./src/webProtected/*"],
-        //     }
-        // },
         build: {
             minify: "terser",//清理垃圾
             terserOptions: {

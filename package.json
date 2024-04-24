@@ -5,10 +5,13 @@
   "description": "esno src/store.t.ts vite的核心用于执行ts,\"publishConfig\": {\"registry\": \"https://registry.npmjs.org/\"},",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "web": "vite --host 0.0.0.0",
+    "web": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "server": "nodemon --exec esno ./src/pcbAll/node/server.ts"
+    "startCpp": "cd F:/ml/458/6141/cpp-platformio && platformio run --target upload --environment dz002",
+    "startNode": "nodemon --exec esno ./src/pcbAll/startNode.ts",
+    "startWeb": "esno ./src/pcbAll/startWeb.ts",
+    "start": "pnpm run startCpp & pnpm run startNode & pnpm run startWeb"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
